@@ -26,11 +26,6 @@ import chart_studio.plotly as py
 import chart_studio.tools as tls
 from pathlib import Path
 
-
-
-
-
-
 '''
 preprocessing, peakdetection, peakfiltering
 input: 
@@ -54,7 +49,9 @@ def processing(msfile, smoothwindow = 41, threshold1 = 6, threshold2 = 4):
     msfile = msfile.rename(columns={0: "mz", 1: "intensity"})
     
     
-    ###PREPROCESSING
+    '''
+    PREPROCESSING
+    '''
     
     
     intensity = msfile["intensity"]
@@ -72,53 +69,16 @@ def processing(msfile, smoothwindow = 41, threshold1 = 6, threshold2 = 4):
     msfile.insert(1, "intensity", intensity)
     
     
-    ###PEAK DETECTION
-    
-    
     '''
-    #z-score moving window
-    # the z-score at which the algorithm signals 
-    threshold = 5
-    # the lag of the moving window
-    lag = 4000
-    # the influence (between 0 and 1) of new signals on the mean and standard deviation
-    influence = 0
-    
-    signals = np.zeros(len(msfile["intensity"]))
-    filteredY = np.array(msfile["intensity"])
-    avgFilter = [0]*len(msfile["intensity"])
-    stdFilter = [0]*len(msfile["intensity"])
-    avgFilter[lag - 1] = np.mean(msfile["intensity"][0:lag])
-    stdFilter[lag - 1] = np.std(msfile["intensity"][0:lag])
-    for i in range(lag, len(msfile["intensity"]) - 1):
-        if abs(msfile["intensity"][i] - avgFilter[i-1]) > threshold * stdFilter [i-1]:
-            if msfile["intensity"][i] > avgFilter[i-1]:
-                signals[i] = 1
-            else:
-                signals[i] = -1
-
-            filteredY[i] = influence * msfile["intensity"][i] + (1 - influence) * filteredY[i-1]
-            avgFilter[i] = np.mean(filteredY[(i-lag):i])
-            stdFilter[i] = np.std(filteredY[(i-lag):i])
-        else:
-            signals[i] = 0
-            filteredY[i] = msfile["intensity"][i]
-            avgFilter[i] = np.mean(filteredY[(i-lag):i])
-            stdFilter[i] = np.std(filteredY[(i-lag):i])
-            
-
-    msfile.insert(2, "peak", signals)
-    
-    # outputs a message with the number of peaks detected
-    #msfile_35 = msfile[msfile["peak"] == 1]
-    #print(str(len(msfile_35.index)) + " peaks detected!")
+    PEAK DETECTION with scipy.signal_find.peaks
     '''
-    
     
     # scipy.signal.find_peaks
     intensity = msfile["intensity"]
     mz = msfile["mz"]
-    
+
+    # pick two thresholds to detect peaks in high mass region
+
     mad = stats.median_absolute_deviation(msfile["intensity"])
     TH1= threshold1*mad
     TH2= threshold2*mad
@@ -149,8 +109,10 @@ def processing(msfile, smoothwindow = 41, threshold1 = 6, threshold2 = 4):
     msfile.insert(2, "peak", signals)    
 
     
-    ###PEAK FILTERING
-    # pick only monoisotopic peaks
+
+    '''
+    PEAK FILTERING to pick only monoisotopic peaks
+    '''
     
     # separate the peaklist to perform different postprocessing according to mass
     # reflectormode does not work above a certain mass
@@ -173,7 +135,9 @@ def processing(msfile, smoothwindow = 41, threshold1 = 6, threshold2 = 4):
             peaksBigMass.append(j)
             
             
-    ## reflectormode: smallest peak is monoisotope      
+    '''
+    Reflector Mode: Just pick smallest peak to get monoisotopic peak
+    '''      
             
     # flip the list so you have sorted from highest to lowest peak
     revpeaklist = np.flip(peaksSmallMass)
@@ -186,8 +150,9 @@ def processing(msfile, smoothwindow = 41, threshold1 = 6, threshold2 = 4):
             FilteredPeakIndex.append(revpeaklist[i])
             
 
-    ## linear mode
-    # calculate mean based on intensity for post-processing
+    '''
+    Linear Mode: Calculate Mean based on intensity for post-processing
+    '''
             
             
     revBigpeaklist = np.flip(peaksBigMass)
@@ -281,7 +246,7 @@ def findSubclass(msfile, pathmasslist, tol = 0.3):
     filenames = []
     os.chdir(pathmasslist)
     
-    #depends on the dataformat: .txt files?
+    
     for file in glob.glob("*.txt"):
         
         # change header and sep if using other format
