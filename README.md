@@ -13,6 +13,7 @@ To determine the subclass of an antibody, the mass spectrum is compared with a l
 
 
 ## Generate library files using MS-Digest
-1. Find sequence of an antibody subclass on [Uniprot](https://www.uniprot.org) or [IMGT](imgt.org/mAb-DB/)
-2. Use [MS-Digest](https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msdigest) to create theoretical spectra based on sequence
+1. Find sequence of antibody subclass on [Uniprot](https://www.uniprot.org) or [IMGT](imgt.org/mAb-DB/)
+2. Use [MS-Digest](https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msdigest) to create theoretical spectra based on sequence of Fc domain (CH2 & CH3)
 3. Collect data in local directory
+
