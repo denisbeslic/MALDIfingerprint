@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Nov 11 12:44:49 2020
-@author: Denis Beslic
-Processing of raw MS data
-Determination of Antibody Subclass
-"""
-
-
 from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 from BaselineRemoval import BaselineRemoval
@@ -16,14 +7,7 @@ import glob, os
 from scipy.signal import find_peaks
 from scipy import stats
 import argparse
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import seaborn as sns
-import mpld3
-from mpld3 import plugins
-import plotly.express as px
 import plotly.graph_objects as go
-import chart_studio.plotly as py
-import chart_studio.tools as tls
 from pathlib import Path
 
 '''
