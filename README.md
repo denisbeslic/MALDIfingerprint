@@ -10,6 +10,7 @@ To determine the subclass of an antibody, the mass spectrum is compared with a l
 - overview table showing absolute number of overlapping peaks between all experimental and theoretical MS files in .csv format
 - directory with experimental MS files with additional "peak" and "subclass" columns in .csv format
 
+![alt text](img/screenshot.png)
 
 
 ## Generate library files using MS-Digest
